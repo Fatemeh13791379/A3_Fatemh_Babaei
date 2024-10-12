@@ -1,5 +1,5 @@
 # A3_Fatemh_Babaei
-This is the third project for the AI course at Gham Lab.
+#This is the third project for the AI course at Gham Lab.
 from sklearn.datasets import fetch_california_housing
 import pandas as pd
 import numpy as np
