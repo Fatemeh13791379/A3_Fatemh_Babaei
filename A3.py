@@ -13,6 +13,7 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_absolute_percentage_error
 from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
 data = fetch_california_housing()
 features = data.data  
@@ -110,20 +111,22 @@ rf_best_params = rf_gs.best_params_
 print(" Random Forest:", rf_best_params)### Random Forest: {'max_depth': None, 'n_estimators': 100}
 
 ###SVR
+scaler = MinMaxScaler()
+features_scaled = scaler.fit_transform(features)
 svr_model = SVR() 
-svr_params = {'kernel': ['linear'],'C': [0.01]}
+svr_params = {'kernel': ['linear','poly', 'rbf'],'C': [0.1, 1,10]}
 svr_gs = GridSearchCV(svr_model, svr_params, cv=kf, scoring='neg_mean_absolute_percentage_error',n_jobs=-1)
-svr_gs.fit(features, target)
+svr_gs.fit(features_scaled, target)
 
 svr_best_score = svr_gs.best_score_
-print("SVR:", svr_best_score)
+print("SVR:", svr_best_score)##SVR: -0.22415376340284107
 svr_best_params = svr_gs.best_params_ 
-print("ا SVR:", svr_best_params)
+print("SVR:", svr_best_params)#SVR: {'C': 10, 'kernel': 'rbf'}
 
 
-
-#### بهترین مدل: چون SVR اجرا نشد فرض را بر این میگیریم که RF بهترین مدل است. 
-
+#### بهترین مدل: RF است . پیش بینی های RF به طور متوسط 18.4 % از مقادیر واقعی فاصله دارند . 
+## در مدل SVR، پیش بینی ها به طور متوسط 23.71%از مقادیر واقعی فاصله دارند . 
+## مدل KNN و درخت تصمیم نیز جواب های یکسانی دادند . 
 
 
 
