@@ -1,5 +1,25 @@
 # A3_Fatemh_Babaei
 #This is the third project for the AI course at Gham Lab.
+'''
+
+APM NOTES:
+
+salam, say konid modele DT va RF hypeprarameters haro bishtar konid yani fght max depth nabashe va chizaye dg bashe va fght 2,3 ta adad nadid ye range bashe 5,6 ta adad
+vaseye SVR ham bayad data normal bshe b shekle zir
+
+
+from sklearn.preprocessing import MinMaxScaler
+scaler=MinMaxScaler()
+x_scaled=scaler.fit_transform(features) 
+
+hala bejaye inke gs ro fit konid roye (features,target) bayad fit konid rooye (x_scaled,target) 
+fgth baraye mdoele SVR va in abesmishe data ha normal bashe va zoodtar va deghate balaatri behetoon bede
+moafagh bashid
+
+'''
+
+#-----------Import Libs----------------------
+
 from sklearn.datasets import fetch_california_housing
 import pandas as pd
 import numpy as np
@@ -15,11 +35,14 @@ from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 
+#-----------Import Data----------------------
 data = fetch_california_housing()
 features = data.data  
 target = data.target 
 data_New = pd.DataFrame(features, columns=data.feature_names)
 data_New['MedHouseValue'] = target
+
+#-----------STEP 0 : DATA CELANING----------------------
 data_New.info()
 print(data.feature_names)
 ###['MedInc', 'HouseAge', 'AveRooms', 'AveBedrms', 'Population', 'AveOccup', 'Latitude', 'Longitude']
@@ -59,6 +82,8 @@ max       15.000100     52.000000  ...   -114.310000       5.000010
 
 [8 rows x 9 columns]
 '''
+
+#------------MODEL1 : LR-----------------
 kf = KFold(n_splits=5, shuffle=True, random_state=42)
 model = LinearRegression()
 my_params = {'fit_intercept':[True],'copy_X': [True, False]}
@@ -72,7 +97,8 @@ best_params = gs.best_params_
 print("LR:", best_params)
 ##LR: {'copy_X': True, 'fit_intercept': True}
 
-##KNN
+
+#------------MODEL2 : KNN -----------------
 
 model = KNeighborsRegressor()
 my_params = { 'n_neighbors': [1, 2, 3, 4, 5, 6, 10],'metric': ['minkowski', 'euclidean', 'manhattan']}
@@ -88,7 +114,9 @@ print("KNN:", best_params)###KNN: {'metric': 'manhattan', 'n_neighbors': 4}
 
 
 
-###DT
+
+#------------MODEL3 : DT -----------------
+
 DT_model = DecisionTreeRegressor(random_state=42)
 DT_my_params = { 'max_depth': [1, 2, 3, 4, 5, 6, 7, 10]} 
 
@@ -99,7 +127,10 @@ DT_best_score = gs.best_score_
 print(" Decision Tree:", DT_best_score) ### Decision Tree: -0.4847991767838546
 DT_best_params = gs.best_params_ 
 print("Decision Tree:", DT_best_params)###Decision Tree: {'metric': 'manhattan', 'n_neighbors': 4}
-###RF
+
+
+#------------MODEL4 : RF -----------------
+
 rf_model = RandomForestRegressor(random_state=42) 
 rf_params = { 'n_estimators': [50, 100],'max_depth': [None, 5]}
 rf_gs = GridSearchCV(rf_model, rf_params, cv=kf, scoring='neg_mean_absolute_percentage_error',n_jobs=-1)
@@ -110,7 +141,8 @@ print(" Random Forest:", rf_best_score)### Random Forest: -0.18438082363235814
 rf_best_params = rf_gs.best_params_ 
 print(" Random Forest:", rf_best_params)### Random Forest: {'max_depth': None, 'n_estimators': 100}
 
-###SVR
+#------------MODEL5 : SVR -----------------
+
 scaler = MinMaxScaler()
 features_scaled = scaler.fit_transform(features)
 svr_model = SVR() 
@@ -160,3 +192,18 @@ plt.ylabel('Median House Value')
 plt.grid()
 plt.legend()
 plt.show()
+
+
+
+
+
+'''
+FINAL REPORT:
+
+
+
+
+
+
+
+'''
