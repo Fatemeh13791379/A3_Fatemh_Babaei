@@ -118,45 +118,45 @@ print("KNN:", best_params)###KNN: {'metric': 'manhattan', 'n_neighbors': 4}
 #------------MODEL3 : DT -----------------
 
 DT_model = DecisionTreeRegressor(random_state=42)
-DT_my_params = { 'max_depth': [1, 2, 3, 4, 5, 6, 7, 10]} 
+DT_my_params = { 'max_depth': [1, 2, 3, 4, 5, 6, 7, 10],'min_samples_split':[2, 5, 10],'min_samples_leaf':[1, 2, 5],'max_leaf_nodes':[10,20,30]} 
 
-gs = GridSearchCV(model, my_params, cv=kf, scoring='neg_mean_absolute_percentage_error')
+gs = GridSearchCV(DT_model, DT_my_params, cv=kf, scoring='neg_mean_absolute_percentage_error')
 gs.fit(features, target)
 
 DT_best_score = gs.best_score_
-print(" Decision Tree:", DT_best_score) ### Decision Tree: -0.4847991767838546
+print(" Decision Tree:", DT_best_score) ### Decision Tree: -0.3176125389134105
 DT_best_params = gs.best_params_ 
-print("Decision Tree:", DT_best_params)###Decision Tree: {'metric': 'manhattan', 'n_neighbors': 4}
+print("Decision Tree:", DT_best_params)###Decision Tree:{'max_depth': 10, 'max_leaf_nodes': 30, 'min_samples_leaf': 1, 'min_samples_split': 2}
 
 
 #------------MODEL4 : RF -----------------
 
 rf_model = RandomForestRegressor(random_state=42) 
-rf_params = { 'n_estimators': [50, 100],'max_depth': [None, 5]}
+rf_params = { 'n_estimators':[100,150,200],'max_depth': [None, 5,10,15],'min_samples_split':[2,5],'min_samples_leaf':[1,2]}
 rf_gs = GridSearchCV(rf_model, rf_params, cv=kf, scoring='neg_mean_absolute_percentage_error',n_jobs=-1)
 rf_gs.fit(features, target)
 
 rf_best_score = rf_gs.best_score_
-print(" Random Forest:", rf_best_score)### Random Forest: -0.18438082363235814
+print(" Random Forest:", rf_best_score)### Random Forest: -0.18270506305756168
 rf_best_params = rf_gs.best_params_ 
-print(" Random Forest:", rf_best_params)### Random Forest: {'max_depth': None, 'n_estimators': 100}
+print(" Random Forest:", rf_best_params)### Random Forest: {'max_depth': None, 'min_samples_leaf': 2, 'min_samples_split': 2, 'n_estimators': 200} 
 
 #------------MODEL5 : SVR -----------------
-
+from sklearn.preprocessing import MinMaxScaler
 scaler = MinMaxScaler()
-features_scaled = scaler.fit_transform(features)
+features_scaled = scaler.fit_transform(features_scaled, target)
 svr_model = SVR() 
-svr_params = {'kernel': ['linear','poly', 'rbf'],'C': [0.1, 1,10]}
+svr_params = {'kernel': ['linear','poly', 'rbf'],'C': [0.1, 1,10],'degree': [2, 3, 4, 5]}
 svr_gs = GridSearchCV(svr_model, svr_params, cv=kf, scoring='neg_mean_absolute_percentage_error',n_jobs=-1)
 svr_gs.fit(features_scaled, target)
 
 svr_best_score = svr_gs.best_score_
 print("SVR:", svr_best_score)##SVR: -0.22415376340284107
 svr_best_params = svr_gs.best_params_ 
-print("SVR:", svr_best_params)#SVR: {'C': 10, 'kernel': 'rbf'}
+print("SVR:", svr_best_params)#SVR:{'C': 10, 'degree': 2, 'kernel': 'rbf'}
 
 
-#### بهترین مدل: RF است . پیش بینی های RF به طور متوسط 18.4 % از مقادیر واقعی فاصله دارند . 
+#### بهترین مدل: RF است . پیش بینی های RF به طور متوسط 18.2 % از مقادیر واقعی فاصله دارند . 
 ## در مدل SVR، پیش بینی ها به طور متوسط 23.71%از مقادیر واقعی فاصله دارند . 
 ## مدل KNN و درخت تصمیم نیز جواب های یکسانی دادند . 
 
